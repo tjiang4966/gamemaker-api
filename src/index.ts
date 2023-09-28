@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { DataConnection } from './classes/DataConnection';
 import { logger } from './helpers/logger';
+import { setupSwagger } from './helpers/swagger';
 
 dotenv.config();
 
@@ -13,6 +14,11 @@ const app = express();
  * Middleware to parse incoming JSON request bodies
  */
 app.use(bodyParser.json({limit: '25mb'}));
+
+/**
+ * Setup Swagger
+ */
+setupSwagger(app);
 
 /**
  * Start API
