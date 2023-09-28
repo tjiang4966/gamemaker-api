@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 import { logger } from '../helpers/logger';
+import { entities } from '../entities';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ export class DataConnection {
       logging: ['error'],
       subscribers: [],
       migrations: [],
+      entities: entities,
     });
     DataConnection.connectionInstance.initialize().then(() => {
     });
