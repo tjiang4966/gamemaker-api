@@ -12,7 +12,7 @@ passport.use(new OAuth2Strategy({
   // options for the google strategy
   clientID: process.env.CLIENT_ID || '',
   clientSecret: process.env.CLIENT_SECRET || '',
-  callbackURL: '/auth/google/redirect',
+  callbackURL: '/auth/success',
 }, async (
   accessToken: string,
   refreshToken: string,

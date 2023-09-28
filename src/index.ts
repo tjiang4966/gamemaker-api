@@ -7,6 +7,7 @@ import { setupSwagger } from './helpers/swagger';
 import { ApiRouter } from './routers';
 import { setupPassport } from './helpers/passport';
 import { setupSession } from './helpers/mysqlSession';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -16,6 +17,11 @@ const app = express();
  * Middleware to parse incoming JSON request bodies
  */
 app.use(bodyParser.json({limit: '25mb'}));
+
+/**
+ * Enable CORS
+ */
+app.use(cors());
 
 /**
  * Setup Swagger
