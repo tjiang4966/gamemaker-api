@@ -11,4 +11,10 @@ export class User {
 
   @OneToMany(() => Game, (game) => game.createdUser)
   games: Game;
+
+  @Column()
+  googleId: string;
+
+  @Column()
+  provider: string;
 }
