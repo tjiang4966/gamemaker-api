@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User";
 import { GameStatusEnum } from "../classes/Enums";
+import { GameHasUser } from "./GameHasUser";
 
 @Entity()
 export class Game {
@@ -45,4 +46,7 @@ export class Game {
 
   @ManyToOne(() => User, (user) => user.games)
   createdUser: User;
+
+  @OneToMany(() => GameHasUser, (gameHasUser) => gameHasUser.game)
+  gameHasUser: GameHasUser[];
 }

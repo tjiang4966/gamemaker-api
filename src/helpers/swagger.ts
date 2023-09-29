@@ -11,7 +11,7 @@ export function setupSwagger(app: Application) {
     },
     servers: [
       {
-        url: 'http://localhost:3000/api/', // Update with your API server URL
+        url: 'http://localhost:3000/', // Update with your API server URL
       },
     ],
     components: {

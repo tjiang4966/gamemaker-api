@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Game } from "./Game";
+import { GameHasUser } from "./GameHasUser";
 
 @Entity()
 export class User {
@@ -17,4 +18,7 @@ export class User {
 
   @Column()
   provider: string;
+
+  @OneToMany(() => GameHasUser, (gameHasUser) => gameHasUser.user)
+  gameHasUser: GameHasUser[];
 }
