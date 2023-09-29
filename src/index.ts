@@ -14,8 +14,16 @@ dotenv.config();
 const app = express();
 
 /**
+ * Initialize data source instance
+ */
+DataSourceInstance.initialize().then(() => {
+  logger.info('🍉[Database] Connection established');
+});
+
+/**
  * Middleware to parse incoming JSON request bodies
  */
+app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json({limit: '25mb'}));
 
 /**
@@ -27,13 +35,6 @@ app.use(cors());
  * Setup Swagger
  */
 setupSwagger(app);
-
-/**
- * Initialize data source instance
- */
-DataSourceInstance.initialize().then(() => {
-  logger.info('🍉[Database] Connection established');
-});
 
 /**
  * Setup MySql Session Config

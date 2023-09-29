@@ -17,23 +17,20 @@ passport.use(new OAuth2Strategy({
   accessToken: string,
   refreshToken: string,
   profile: Profile,
-  done: VerifyFunction
+  done: VerifyFunction,
 ) => {
   // passport callback function
   try {
     const currentUser = await DataSourceInstance.manager.findOneBy(User, {googleId: profile.id});
     if (!currentUser) {
       // save new user
-      logger.debug(`creating new user: googleId - ${profile.id}`)
       const newUser = await DataSourceInstance.getRepository(User).save({
         googleId: profile.id,
         displayName: profile.displayName,
         provider: profile.provider || '',
       });
-      logger.debug(newUser);
       done(null, newUser);
     } else {
-      logger.debug(`user exists: googleId - ${currentUser.googleId}`);
       done(null, currentUser);
     }
   } catch (err) {
