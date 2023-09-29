@@ -49,8 +49,4 @@ export class Game {
 
   @OneToMany(() => GameHasUser, (gameHasUser) => gameHasUser.game)
   gameHasUser: GameHasUser[];
-
-  public getOpenSpotCount() {
-
-  }
 }
