@@ -63,5 +63,5 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
  * Start API
  */
 app.listen(process.env.PORT, () => {
-  logger.info(`⚡️[server]: Server is running at http://localhost:${process.env.PORT}`)
+  logger.info(`⚡️[server]: Server is running at ${process.env.APP_DOMAIN}:${process.env.PORT}`)
 });
