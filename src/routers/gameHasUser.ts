@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { authenticated } from "../helpers/middlewares/authenticated";
+import { authenticated } from "../helpers/middlewares/authentications";
 import { requiredFields } from "../helpers/middlewares/requiredFields";
 import { DataSourceInstance } from "../classes/DataConnection";
 import { GameHasUser } from "../entities/GameHasUser";
@@ -9,7 +9,7 @@ import { RegisterStatusEnum } from "../classes/Enums";
 import { logger } from "../helpers/logger";
 
 const checkAuthorization = async (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as User;
+  const user = req.user;
   if (!user) {
     return res.status(404).send({
       error: 'User Not Found'
@@ -107,7 +107,7 @@ router.post('/', authenticated, requiredFields([
 ]), async (req, res, next) => {
   try {
     // validate that the user exists
-    const user = await DataSourceInstance.manager.findOneBy(User, {id: (req.user as User).id})
+    const user = await DataSourceInstance.manager.findOneBy(User, {id: req.user?.id})
     if (!user) {
       return res.status(404).send({
         error: 'User Not Found'

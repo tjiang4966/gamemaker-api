@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticated } from "../helpers/middlewares/authenticated";
+import { authenticated, authenticateJWT } from "../helpers/middlewares/authentications";
 import { DataSourceInstance } from "../classes/DataConnection";
 import { User } from "../entities/User";
 
@@ -34,28 +34,27 @@ const router = Router();
  * @swagger
  * /user/self:
  *   get:
- *     summary: Get the user's own profile
- *     tags: [User]
+ *     summary: Get the authenticated user's information.
+ *     tags:
+ *       - User
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     responses:
- *       '200':
- *         description: Successful operation
+ *       200:
+ *         description: Successful response with user information.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'  # Reference to the User schema
- *       '401':
- *         description: Unauthorized - Invalid or missing authentication token
- *       '404':
- *         description: Not Found - User not found
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized access.
+ *       500:
+ *         description: Internal server error.
  */
-router.get('/self', authenticated, async (req, res, next) => {
+router.get('/self', authenticateJWT, async (req, res, next) => {
   try {
-    const user = await DataSourceInstance.manager.findOneBy(User, { id: (req.user as User).id})
-    res.send({
-      data: user,
-    })
+    const user = await DataSourceInstance.manager.findOneBy(User, { id: req.user?.id})
+    res.json(user);
   } catch (err) {
     next(err);
   }

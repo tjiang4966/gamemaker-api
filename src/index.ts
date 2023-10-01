@@ -7,6 +7,7 @@ import { setupSwagger } from './helpers/swagger';
 import { ApiRouter } from './routers';
 import { setupPassport } from './helpers/passport';
 import { setupSession } from './helpers/mysqlSession';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 dotenv.config();
@@ -21,6 +22,11 @@ DataSourceInstance.initialize().then(() => {
 });
 
 /**
+ * Cookie Parser
+ */
+app.use(cookieParser());
+
+/**
  * Middleware to parse incoming JSON request bodies
  */
 app.use(bodyParser.urlencoded({extended:false}));
@@ -29,7 +35,11 @@ app.use(bodyParser.json({limit: '25mb'}));
 /**
  * Enable CORS
  */
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+  ]
+}));
 
 /**
  * Setup Swagger
@@ -44,7 +54,9 @@ setupSession(app);
 /**
  * Setup Passport.js
  */
-setupPassport(app);
+process.nextTick(() => {
+  setupPassport(app);
+});
 
 /**
  * Add Router

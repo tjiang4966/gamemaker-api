@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { authenticated } from "../helpers/middlewares/authenticated";
+import { authenticated } from "../helpers/middlewares/authentications";
 import { requiredFields } from "../helpers/middlewares/requiredFields";
 import { DataSourceInstance } from "../classes/DataConnection";
 import { Game } from "../entities/Game";
@@ -9,7 +9,7 @@ import { logger } from "../helpers/logger";
 const router = Router();
 
 const checkAuthorization = async (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as User;
+  const user = req.user;
   const game = await DataSourceInstance.getRepository(Game).createQueryBuilder('game')
     .leftJoinAndSelect('game.createdUser', 'user')
     .where('game.id = :gameId', { gameId: req.params.gameId })
@@ -98,7 +98,7 @@ router.post('/', authenticated, requiredFields([
   'name', 'gameStart', 'gameEnd', 'registerDueDate', 'price', 'location', 'spots'
 ]), async (req, res, next) => {
   logger.debug(req.user);
-  const user = await DataSourceInstance.manager.findOneBy(User, {id: (req.user as User).id });
+  const user = await DataSourceInstance.manager.findOneBy(User, {id: req.user?.id });
   if (!user) {
     return next('User Not Found');
   }
@@ -215,7 +215,7 @@ router.put('/:gameId', authenticated, checkAuthorization, async (req, res, next)
  */
 router.get('/', authenticated, async (req, res, next) => {
   // only get a list of games that is created by the user or the user joins
-  const userId = (req.user as User).id;
+  const userId = req.user?.id;
   const games = await DataSourceInstance.getRepository(Game).createQueryBuilder('game')
     .leftJoinAndSelect('game.createdUser', 'creator')
     .leftJoinAndSelect('game.gameHasUser', 'gameHasUser')

@@ -1,7 +1,12 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Game } from "./Game";
 import { GameHasUser } from "./GameHasUser";
-
+import { IJwtBody } from "../classes/IJwtBody";
+declare global {
+  namespace Express {
+    interface User extends IJwtBody {}
+  }
+}
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()

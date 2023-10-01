@@ -12,7 +12,7 @@ passport.use(new OAuth2Strategy({
   // options for the google strategy
   clientID: process.env.CLIENT_ID || '',
   clientSecret: process.env.CLIENT_SECRET || '',
-  callbackURL: '/auth/success',
+  callbackURL: '/auth/login/google/callback',
 }, async (
   accessToken: string,
   refreshToken: string,
@@ -41,6 +41,7 @@ passport.use(new OAuth2Strategy({
 
 passport.serializeUser((user, done) => {
   try {
+    logger.debug('Serializing User ...');
     done(null, user);
   } catch (err) {
     logger.error(err);
@@ -50,6 +51,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser<User>((user, done) =>{
   try {
+    logger.debug('Deserializing User ...');
     return done(null, user);
   } catch (err) {
     logger.error(err);

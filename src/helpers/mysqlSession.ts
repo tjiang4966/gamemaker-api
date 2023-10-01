@@ -33,6 +33,9 @@ const mysqlSessionOptions = (): expressSession.SessionOptions => {
 const setupSession = (app: Application) => {
   logger.info('Initializing Session ...');
   app.use(expressSession.default(mysqlSessionOptions()));
+  process.nextTick(() => {
+    logger.info('Session Initialized');
+  })
 }
 
 export { setupSession };
