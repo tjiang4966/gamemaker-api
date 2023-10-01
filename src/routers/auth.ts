@@ -3,6 +3,9 @@ import passport from 'passport';
 import { logger } from '../helpers/logger';
 import * as JWT from 'jsonwebtoken';
 import { IJwtBody } from '../classes/IJwtBody';
+import { jwtSignOption } from '../config/config';
+import { generateAccessToken } from '../helpers/utils/generateAccessToken';
+import { User } from '../entities/User';
 
 const router = Router();
 let target: string;
@@ -10,10 +13,12 @@ let target: string;
 router.get('/login/google/callback', passport.authenticate('google', {
   scope: ['profile']
 }), (req, res, next) => {
+  
   // need to store the authorization code somewhere
-  const { id, provider } = req.user as IJwtBody; 
-  const jwtToken = JWT.sign({ id, provider }, process.env.JWT_SECRET as string)
-  res.cookie('jwt', jwtToken);
+
+  // Sign JWT Token
+  const accessToken = generateAccessToken(req.user as User);
+  res.cookie('jwt', accessToken);
   res.redirect(`http://localhost:5173/${target ?? ''}`);
   next();
 });

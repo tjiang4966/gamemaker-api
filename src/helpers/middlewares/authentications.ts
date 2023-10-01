@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as JWT from 'jsonwebtoken';
 import { IJwtBody } from "../../classes/IJwtBody";
+import { logger } from "../logger";
 
 export const authenticated = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
@@ -26,7 +27,11 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
   }
   // Now, 'token' contains the JWT token you can use
   JWT.verify(token, process.env.JWT_SECRET as string, { ignoreExpiration: false }, (err, body) => {
+    logger.debug('[authentications.authenticateJWT] body: ', body);
     if (err) {
+      if (err.name === 'TokenExpiredError'){
+        res.status(401).json({ message: 'Token has expired.'})
+      }
       return next(err);
     }
     const { id, provider } = body as IJwtBody
@@ -42,7 +47,7 @@ export const authenticateUserLogin = [
   authenticateJWT,
   (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return res.status(401).json('You must login.');
+      return res.status(401).json({ message: 'You must login.' });
     }
     return next();
   },
