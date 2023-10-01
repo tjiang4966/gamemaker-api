@@ -1,5 +1,5 @@
-import { Router } from "express";
-import { authenticated, authenticateJWT } from "../helpers/middlewares/authentications";
+import { NextFunction, Request, Response, Router } from "express";
+import { authenticateUserLogin } from "../helpers/middlewares/authentications";
 import { DataSourceInstance } from "../classes/DataConnection";
 import { User } from "../entities/User";
 
@@ -7,7 +7,7 @@ const router = Router();
 
 /**
  * @swagger
- * components:
+ * components: 
  *   schemas:
  *     User:
  *       type: object
@@ -38,7 +38,7 @@ const router = Router();
  *     tags:
  *       - User
  *     security:
- *       - bearerAuth: []
+ *       - JWT: []
  *     responses:
  *       200:
  *         description: Successful response with user information.
@@ -51,7 +51,7 @@ const router = Router();
  *       500:
  *         description: Internal server error.
  */
-router.get('/self', authenticateJWT, async (req, res, next) => {
+router.get('/self', authenticateUserLogin, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await DataSourceInstance.manager.findOneBy(User, { id: req.user?.id})
     res.json(user);

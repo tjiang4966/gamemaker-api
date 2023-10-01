@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { authenticated } from "../helpers/middlewares/authentications";
+import { authenticateUserLogin, authenticated } from "../helpers/middlewares/authentications";
 import { requiredFields } from "../helpers/middlewares/requiredFields";
 import { DataSourceInstance } from "../classes/DataConnection";
 import { GameHasUser } from "../entities/GameHasUser";
@@ -69,7 +69,7 @@ const router = Router();
  *     summary: Register a user for a game
  *     tags: [GameHasUser]
  *     security:
- *       - BearerAuth: []
+ *       - JWT: []
  *     requestBody:
  *       required: true
  *       content:
@@ -102,9 +102,9 @@ const router = Router();
  *       '422':
  *         description: Unprocessable Entity - Duplicate records
  */
-router.post('/', authenticated, requiredFields([
+router.post('/', authenticateUserLogin, requiredFields([
   'game', 'inGameName'
-]), async (req, res, next) => {
+]), async (req: Request, res: Response, next: NextFunction) => {
   try {
     // validate that the user exists
     const user = await DataSourceInstance.manager.findOneBy(User, {id: req.user?.id})
@@ -155,7 +155,7 @@ router.post('/', authenticated, requiredFields([
  *     summary: Update the in-game name of a user in a game
  *     tags: [GameHasUser]
  *     security:
- *       - BearerAuth: []
+ *       - JWT: []
  *     parameters:
  *       - in: path
  *         name: gameHasUserId
@@ -189,7 +189,7 @@ router.post('/', authenticated, requiredFields([
  *       '400':
  *         description: Bad Request - Invalid request body or parameters
  */
-router.put('/:gameHasUserId', authenticated, checkAuthorization, async (req, res, next) => {
+router.put('/:gameHasUserId', authenticateUserLogin, checkAuthorization, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const gameHasUser: GameHasUser = (req as any).gameHasUser as GameHasUser;
     const { inGameName } = req.body;

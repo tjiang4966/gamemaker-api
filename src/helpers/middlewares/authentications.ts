@@ -25,8 +25,6 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
     return res.status(401).json({ message: 'Invalid JWT token format' });
   }
   // Now, 'token' contains the JWT token you can use
-  console.log('JWT Token:', token);
-
   JWT.verify(token, process.env.JWT_SECRET as string, { ignoreExpiration: false }, (err, body) => {
     if (err) {
       return next(err);
@@ -38,4 +36,14 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
   });
 
   return next();
-}
+};
+
+export const authenticateUserLogin = [
+  authenticateJWT,
+  (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json('You must login.');
+    }
+    return next();
+  },
+];

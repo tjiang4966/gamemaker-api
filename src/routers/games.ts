@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { authenticated } from "../helpers/middlewares/authentications";
+import { authenticateUserLogin, authenticated } from "../helpers/middlewares/authentications";
 import { requiredFields } from "../helpers/middlewares/requiredFields";
 import { DataSourceInstance } from "../classes/DataConnection";
 import { Game } from "../entities/Game";
@@ -73,7 +73,7 @@ const checkAuthorization = async (req: Request, res: Response, next: NextFunctio
  *     summary: Create a new game
  *     tags: [Game]
  *     security:
- *       - BearerAuth: []
+ *       - JWT: []
  *     requestBody:
  *       required: true
  *       content:
@@ -94,9 +94,9 @@ const checkAuthorization = async (req: Request, res: Response, next: NextFunctio
  *                     id:
  *                       type: integer
  */
-router.post('/', authenticated, requiredFields([
+router.post('/', authenticateUserLogin, requiredFields([
   'name', 'gameStart', 'gameEnd', 'registerDueDate', 'price', 'location', 'spots'
-]), async (req, res, next) => {
+]), async (req: Request, res: Response, next: NextFunction) => {
   logger.debug(req.user);
   const user = await DataSourceInstance.manager.findOneBy(User, {id: req.user?.id });
   if (!user) {
@@ -125,7 +125,7 @@ router.post('/', authenticated, requiredFields([
  *     summary: Update a game by ID
  *     tags: [Game]
  *     security:
- *       - BearerAuth: []
+ *       - JWT: []
  *     parameters:
  *       - in: path
  *         name: gameId
@@ -158,7 +158,7 @@ router.post('/', authenticated, requiredFields([
  *       '400':
  *         description: Bad Request - Invalid request body or parameters
  */
-router.put('/:gameId', authenticated, checkAuthorization, async (req, res, next) => {
+router.put('/:gameId', authenticateUserLogin, checkAuthorization, async (req: Request, res: Response, next: NextFunction) => {
   const game: Game = (req as any).game as Game;
   const {
     name,
@@ -197,7 +197,7 @@ router.put('/:gameId', authenticated, checkAuthorization, async (req, res, next)
  *     summary: Get a list of games created by the user or the user has joined
  *     tags: [Game]
  *     security:
- *       - BearerAuth: []
+ *       - JWT: []
  *     responses:
  *       '200':
  *         description: Successful operation
@@ -213,7 +213,7 @@ router.put('/:gameId', authenticated, checkAuthorization, async (req, res, next)
  *       '401':
  *         description: Unauthorized - Invalid or missing authentication token
  */
-router.get('/', authenticated, async (req, res, next) => {
+router.get('/', authenticateUserLogin, async (req: Request, res: Response, next: NextFunction) => {
   // only get a list of games that is created by the user or the user joins
   const userId = req.user?.id;
   const games = await DataSourceInstance.getRepository(Game).createQueryBuilder('game')
@@ -234,7 +234,7 @@ router.get('/', authenticated, async (req, res, next) => {
  *     summary: Get a game by ID
  *     tags: [Game]
  *     security:
- *       - BearerAuth: []
+ *       - JWT: []
  *     parameters:
  *       - in: path
  *         name: gameId
@@ -254,7 +254,7 @@ router.get('/', authenticated, async (req, res, next) => {
  *       '401':
  *         description: Unauthorized - Invalid or missing authentication token
  */
-router.get('/:gameId', authenticated, async (req, res, next) => {
+router.get('/:gameId', authenticateUserLogin, async (req: Request, res: Response, next: NextFunction) => {
   const game = await DataSourceInstance.getRepository(Game).createQueryBuilder('game')
     .leftJoinAndSelect('game.createdUser', 'creator')
     .leftJoinAndSelect('game.gameHasUser', 'player')
@@ -277,7 +277,7 @@ router.get('/:gameId', authenticated, async (req, res, next) => {
  *     summary: Delete a game by ID
  *     tags: [Game]
  *     security:
- *       - BearerAuth: []
+ *       - JWT: []
  *     parameters:
  *       - in: path
  *         name: gameId
@@ -302,7 +302,7 @@ router.get('/:gameId', authenticated, async (req, res, next) => {
  *       '401':
  *         description: Unauthorized - Invalid or missing authentication token
  */
-router.delete('/:gameId', authenticated, checkAuthorization, async (req, res, next) => {
+router.delete('/:gameId', authenticateUserLogin, checkAuthorization, async (req: Request, res: Response, next: NextFunction) => {
   const game: Game = (req as any).game as Game;
   const result = await DataSourceInstance.createQueryBuilder().update(Game)
     .set({

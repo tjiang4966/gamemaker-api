@@ -6,7 +6,7 @@ export function setupSwagger(app: Application) {
   const swaggerDefinition = {
     openapi: '3.0.0',
     info: {
-      title: 'Lyah Todo API',
+      title: 'Gamemaker API',
       version: '0.0.1',
     },
     servers: [
@@ -15,10 +15,14 @@ export function setupSwagger(app: Application) {
       },
     ],
     components: {
-      // schemas: {
-      //   ...SwaggerSchemas,
-      // }
-    }
+      securitySchemes: {
+        JWT: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    },
   };
 
   const options = {
