@@ -30,7 +30,7 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
     logger.debug('[authentications.authenticateJWT] body: ', body);
     if (err) {
       if (err.name === 'TokenExpiredError'){
-        res.status(401).json({ message: 'Token has expired.'})
+        return res.status(401).json({ message: 'Token has expired.'})
       }
       return next(err);
     }
