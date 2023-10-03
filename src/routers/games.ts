@@ -113,9 +113,7 @@ router.post('/', authenticateUserLogin, requiredFields([
     spots: req.body.spots,
     createdUser: user,
   });
-  return res.send({
-    data: result
-  });
+  return res.json(result);
 });
 
 /**
@@ -185,9 +183,7 @@ router.put('/:gameId', authenticateUserLogin, checkAuthorization, async (req: Re
   .where({id: req.params.gameId})
   .execute();
   logger.debug(result);
-  return res.send({
-    data: result,
-  });
+  return res.json(result);
 });
 
 /**
@@ -222,9 +218,7 @@ router.get('/', authenticateUserLogin, async (req: Request, res: Response, next:
     .leftJoinAndSelect('gameHasUser.user', 'player')
     .where('(creator.id = :userId OR player.id = :userId) AND game.deleted = 0', {userId: userId})
     .getMany();
-  return res.send({
-    data: games,
-  });
+  return res.json(games);
 });
 
 /**
@@ -265,9 +259,7 @@ router.get('/:gameId', authenticateUserLogin, async (req: Request, res: Response
       error: 'Game Not Found'
     });
   }
-  return res.send({
-    data: game,
-  })
+  return res.json(game);
 });
 
 /**
@@ -311,9 +303,7 @@ router.delete('/:gameId', authenticateUserLogin, checkAuthorization, async (req:
     })
     .where({id: req.params.gameId})
     .execute();
-  return res.send({
-    data: result,
-  });
+  return res.json(result);
 });
 
 export default router;

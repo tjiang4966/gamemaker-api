@@ -4,7 +4,7 @@ export enum GameStatusEnum {
   IN_GAME = 'in-game',
   GAME_OVER = 'game-over',
   CANCELED = 'canceled',
-  COMMING_SOON = 'coming-soon'
+  COMING_SOON = 'coming-soon'
 }
 
 export enum RegisterStatusEnum {
