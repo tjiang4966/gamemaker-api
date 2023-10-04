@@ -15,6 +15,9 @@ export class User {
   @Column()
   displayName: string;
 
+  @Column()
+  profilePhoto: string;
+
   @OneToMany(() => Game, (game) => game.createdUser)
   games: Game;
 

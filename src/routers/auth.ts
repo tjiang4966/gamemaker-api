@@ -1,9 +1,5 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { logger } from '../helpers/logger';
-import * as JWT from 'jsonwebtoken';
-import { IJwtBody } from '../classes/IJwtBody';
-import { jwtSignOption } from '../config/config';
 import { generateAccessToken } from '../helpers/utils/generateAccessToken';
 import { User } from '../entities/User';
 

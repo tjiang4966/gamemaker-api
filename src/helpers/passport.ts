@@ -21,7 +21,7 @@ passport.use(new OAuth2Strategy({
 ) => {
   // passport callback function
   try {
-    const currentUser = await DataSourceInstance.manager.findOneBy(User, {googleId: profile.id});
+    let currentUser = await DataSourceInstance.manager.findOneBy(User, {googleId: profile.id});
     if (!currentUser) {
       // save new user
       const newUser = await DataSourceInstance.getRepository(User).save({
@@ -31,6 +31,14 @@ passport.use(new OAuth2Strategy({
       });
       done(null, newUser);
     } else {
+      // update user info
+      const { displayName, photos, } = profile;
+      currentUser = {
+        ...currentUser,
+        displayName,
+        profilePhoto: photos ? photos[0]?.value : '',
+      };
+      await DataSourceInstance.getRepository(User).save(currentUser, {});
       done(null, currentUser);
     }
   } catch (err) {
